@@ -23,9 +23,11 @@ public class GrabObject : MonoBehaviour
         // Get the hand/controller transform when grabbed
         Transform handTransform = args.interactorObject.transform;
 
+
         // Set the object’s position and rotation to match the hand
-        transform.position = handTransform.position;
-        transform.rotation = handTransform.rotation;
+        transform.SetPositionAndRotation(handTransform.position, handTransform.rotation);
+        //transform.parent = handTransform.parent;
+
 
         // Optionally, set isKinematic on the Rigidbody to ensure it doesn't get affected by physics while grabbed
         Rigidbody rb = GetComponent<Rigidbody>();
@@ -33,6 +35,7 @@ public class GrabObject : MonoBehaviour
         {
             rb.isKinematic = true;
         }
+
     }
 
     private void OnRelease(SelectExitEventArgs args)
@@ -51,8 +54,7 @@ public class GrabObject : MonoBehaviour
         if (grabInteractable.isSelected)
         {
             Transform handTransform = grabInteractable.interactorsSelecting[0].transform;
-            transform.position = handTransform.position;
-            transform.rotation = handTransform.rotation;
+            transform.SetPositionAndRotation(handTransform.position, handTransform.rotation);
         }
     }
 }

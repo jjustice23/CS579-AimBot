@@ -31,8 +31,6 @@ upm-ci.log
 # UserSettings introduced in 2020.1
 /UserSettings/
 
-/XRI Examples_BurstDebugInformation_DoNotShip/
-
 # Uncomment this line if you wish to ignore the asset store tools plugin
 /[Aa]ssets/AssetStoreTools*
 
