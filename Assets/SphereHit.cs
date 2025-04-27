@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR.Content.Interaction;
 
 public class SphereHit : MonoBehaviour
@@ -11,17 +12,20 @@ public class SphereHit : MonoBehaviour
     public GameObject wall;
     public GameObject room;
 
-    public float TimerDefault;
+    //public float TimerDefault;
     public GameObject StartButton;
     public GameObject Shots;
     public TextMeshProUGUI Stats;
+    public TextMeshProUGUI TimerText;
+    public GameObject TimerSlider;
 
+    private Slider slider;
     private int TargetsHit;
     private float HitRatio; // find way to track the number of times the user "fires" the gun
-    private script ButtonStatus;
-    private XRPushButton Pushed;
+    private StartButtonScript ButtonStatus;
+    //private XRPushButton Pushed;
     private NumShots TotalShots;    // !!NOTE: CURRENTLY WILL ONLY WORK FOR 1 GUN TYPE NEED TO FIND MORE FLEXIBLE SOLUTION!!
-    private bool GameStarted = false;
+    [System.NonSerialized]public bool GameStarted = false;
     private float Timer;
 
     private void InstatiateTarget(int TargetsHit, float HitRatio, bool GameStarted, float Timer)
@@ -34,9 +38,10 @@ public class SphereHit : MonoBehaviour
 
     private void Start()
     {
-        ButtonStatus = StartButton.GetComponent<script>();
-        Pushed = StartButton.GetComponent<XRPushButton>();
+        ButtonStatus = StartButton.GetComponent<StartButtonScript>();
+        //Pushed = StartButton.GetComponent<XRPushButton>();
         TotalShots = Shots.GetComponent<NumShots>();
+        slider = TimerSlider.GetComponent<Slider>();
     }
 
     private void Update()
@@ -47,13 +52,17 @@ public class SphereHit : MonoBehaviour
             if (Timer > 0)
             {
                 Timer -= Time.deltaTime;
+                UpdateTimerText();
             }
             else if (Timer <= 0)
             {
                 //need to reset button height
                 GameStarted = false;
+                ButtonStatus.OnClick();
+                ButtonStatus.ToggleButton();
                 // note TargetHits decremented to ignore first target that starts game
-                Stats.text = TargetsHit-1 + " Targets Hit and " + ((float)(TargetsHit-1)/(float)TotalShots.get())*100 + "% Hit Ratio";  // should probably use HitRatio var to be more idiomatic, but I cant be bothered
+                //Stats.text = TargetsHit-1 + " Targets Hit and " + ((float)(TargetsHit-1)/(float)TotalShots.get())*100 + "% Hit Ratio";  // should probably use HitRatio var to be more idiomatic, but I cant be bothered
+                UpdateStatsText(); // probably unneeded
             }
         }
     }
@@ -64,16 +73,20 @@ public class SphereHit : MonoBehaviour
         if (GameStarted)
         {
             TargetsHit++;
+            UpdateStatsText();
         }
 
         if (ButtonStatus.started && !GameStarted)
         {
             TotalShots.set(0);
-            Timer = TimerDefault;
-            ButtonStatus.started = false;
+            Timer = slider.value;
+            //ButtonStatus.started = false;
+            ButtonStatus.ToggleButton();
             GameStarted = true;
             HitRatio = 0.0f;
             TargetsHit = 0;
+            UpdateStatsText();
+            UpdateTimerText();
         }
 
         SpawnTarget();
@@ -104,5 +117,24 @@ public class SphereHit : MonoBehaviour
         SphereScript.InstatiateTarget(TargetsHit, HitRatio, GameStarted, Timer);
 
         Destroy(gameObject);
+    }
+
+    public void UpdateStatsText()
+    {
+        float ratio;
+        if(TargetsHit == 0)
+        {
+            ratio = 1.0f;
+        }
+        else
+        {
+            ratio = ((float)(TargetsHit - 1) / (float)TotalShots.get());
+        }
+        Stats.text = "Targets Hit: " + (TargetsHit) + "\nHit Ratio: " + (ratio * 100) + "%";  // should probably use HitRatio var to be more idiomatic, but I cant be bothered
+    }
+
+    private void UpdateTimerText()
+    {
+        if(Timer >= 0) TimerText.text = "Timer: " + Mathf.Floor(Timer);
     }
 }

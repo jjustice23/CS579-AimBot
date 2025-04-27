@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class NumShots : MonoBehaviour
 {
+    [SerializeField] GameObject HitData;
+    private SphereHit hd;
     private int TotalShots;
+
+    public void Start()
+    {
+        hd = HitData.GetComponent<SphereHit>();
+    }
 
     public int get()
     {
