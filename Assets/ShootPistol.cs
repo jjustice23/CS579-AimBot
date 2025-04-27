@@ -11,7 +11,15 @@ namespace UnityEngine.XR.Content.Interaction
     {
         [SerializeField] private AudioClip shellDropClip;
         [SerializeField] private VisualEffect muzzleFlash;
+        [SerializeField] private GameObject muzzleLight;
         private AudioSource gunAudio;
+
+        LightFlash LightFlashScript;
+
+        private void Start()
+        {
+            LightFlashScript = muzzleLight.GetComponent<LightFlash>();
+        }
 
         private void Awake()
         {
@@ -30,6 +38,7 @@ namespace UnityEngine.XR.Content.Interaction
             }
             TriggerHaptics(0.7f, 0.1f); // Call for haptics
             muzzleFlash.Play();
+            LightFlashScript.FlashLight();
 
             Vector3 gunPosition = transform.position; // adjust to "Sight" maybe?
             Vector3 gunForwardDirection = transform.right*-1; // a little hacky, but seems to work for now
