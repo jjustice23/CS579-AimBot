@@ -12,6 +12,9 @@ namespace UnityEngine.XR.Content.Interaction
         [SerializeField] private AudioClip shellDropClip;
         [SerializeField] private VisualEffect muzzleFlash;
         [SerializeField] private GameObject muzzleLight;
+        [SerializeField] private GameObject bulletHolePrefab;
+        [SerializeField] private GameObject bulletHoleContainer;
+        [SerializeField] private float destroyDelay;
         private AudioSource gunAudio;
 
         LightFlash LightFlashScript;
@@ -43,6 +46,7 @@ namespace UnityEngine.XR.Content.Interaction
             Vector3 gunPosition = transform.position; // adjust to "Sight" maybe?
             Vector3 gunForwardDirection = transform.right*-1; // a little hacky, but seems to work for now
             int interactableLayer = LayerMask.GetMask("Target");
+            int roomLayer = LayerMask.GetMask("env");
 
             Ray ray = new Ray(gunPosition, gunForwardDirection);
             RaycastHit hit;
@@ -52,6 +56,21 @@ namespace UnityEngine.XR.Content.Interaction
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, interactableLayer))
             {
                 hit.collider.gameObject.GetComponent<SphereHit>().OnHit();
+            } else if (Physics.Raycast(ray, out hit, Mathf.Infinity, roomLayer))
+            {
+                float positionMultiplier = .5f;
+                float spawnX = hit.point.x - ray.direction.x * positionMultiplier;
+                float spawnY = hit.point.y - ray.direction.y * positionMultiplier;
+                float spawnZ = hit.point.z - ray.direction.z * positionMultiplier;
+                Vector3 spawnPos = new Vector3(spawnX, spawnY, spawnZ);
+
+                GameObject bulletHole = Instantiate(bulletHolePrefab, spawnPos, Quaternion.identity);
+                Quaternion targetRotation = Quaternion.LookRotation(ray.direction);
+
+                bulletHole.transform.rotation = targetRotation;
+                bulletHole.transform.SetParent(bulletHoleContainer.transform);
+                bulletHole.transform.Rotate(Vector3.forward, Random.Range(0f, 360f));
+                Destroy(bulletHole, destroyDelay);
             }
         }
         private IEnumerator PlayShellDelayed(float delay)
