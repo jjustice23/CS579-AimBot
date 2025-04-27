@@ -18,6 +18,7 @@ public class SphereHit : MonoBehaviour
     public TextMeshProUGUI Stats;
     public TextMeshProUGUI TimerText;
     public GameObject TimerSlider;
+    
 
     private Slider slider;
     private int TargetsHit;
@@ -27,6 +28,7 @@ public class SphereHit : MonoBehaviour
     private NumShots TotalShots;    // !!NOTE: CURRENTLY WILL ONLY WORK FOR 1 GUN TYPE NEED TO FIND MORE FLEXIBLE SOLUTION!!
     [System.NonSerialized]public bool GameStarted = false;
     private float Timer;
+    private AudioSource TimerEnd;
 
     private void InstatiateTarget(int TargetsHit, float HitRatio, bool GameStarted, float Timer)
     {
@@ -42,6 +44,7 @@ public class SphereHit : MonoBehaviour
         //Pushed = StartButton.GetComponent<XRPushButton>();
         TotalShots = Shots.GetComponent<NumShots>();
         slider = TimerSlider.GetComponent<Slider>();
+        TimerEnd = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -57,6 +60,7 @@ public class SphereHit : MonoBehaviour
             else if (Timer <= 0)
             {
                 //need to reset button height
+                TimerEnd.PlayOneShot(TimerEnd.clip);
                 GameStarted = false;
                 ButtonStatus.OnClick();
                 ButtonStatus.ToggleButton();

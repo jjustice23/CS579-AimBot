@@ -1,5 +1,7 @@
 //using System;
 using System.Collections;
+using Unity.XR.CoreUtils;
+
 //using System.Collections.Generic;
 //using JetBrains.Annotations;
 using UnityEngine;
@@ -15,6 +17,7 @@ namespace UnityEngine.XR.Content.Interaction
         [SerializeField] private GameObject bulletHolePrefab;
         [SerializeField] private GameObject bulletHoleContainer;
         [SerializeField] private float destroyDelay;
+        [SerializeField] private GameObject AimDirection;
         private AudioSource gunAudio;
 
         LightFlash LightFlashScript;
@@ -43,8 +46,9 @@ namespace UnityEngine.XR.Content.Interaction
             muzzleFlash.Play();
             LightFlashScript.FlashLight();
 
-            Vector3 gunPosition = transform.position; // adjust to "Sight" maybe?
-            Vector3 gunForwardDirection = transform.right*-1; // a little hacky, but seems to work for now
+            Vector3 gunPosition = AimDirection.transform.position; // adjust to "Sight" maybe?
+            //Vector3 gunForwardDirection = transform.right*-1; // a little hacky, but seems to work for now
+            Vector3 gunForwardDirection = AimDirection.transform.forward;
             int interactableLayer = LayerMask.GetMask("Target");
             int roomLayer = LayerMask.GetMask("env");
 
