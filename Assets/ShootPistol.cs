@@ -3,12 +3,14 @@ using System.Collections;
 //using System.Collections.Generic;
 //using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.VFX;
 using UnityEngine.XR;
 namespace UnityEngine.XR.Content.Interaction
 {
     public class ShootPistol : MonoBehaviour
     {
         [SerializeField] private AudioClip shellDropClip;
+        [SerializeField] private VisualEffect muzzleFlash;
         private AudioSource gunAudio;
 
         private void Awake()
@@ -27,6 +29,8 @@ namespace UnityEngine.XR.Content.Interaction
                 StartCoroutine(PlayShellDelayed(0.5f)); //calls subroutine to play shell casing sound
             }
             TriggerHaptics(0.7f, 0.1f); // Call for haptics
+            muzzleFlash.Play();
+
             Vector3 gunPosition = transform.position; // adjust to "Sight" maybe?
             Vector3 gunForwardDirection = transform.right*-1; // a little hacky, but seems to work for now
             int interactableLayer = LayerMask.GetMask("Target");
