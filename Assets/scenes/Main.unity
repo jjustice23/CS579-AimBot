@@ -666,6 +666,10 @@ PrefabInstance:
       propertyPath: m_RenderPostProcessing
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3186680927890312076, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3755023497685003746, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -722,6 +726,10 @@ PrefabInstance:
       propertyPath: m_RenderPostProcessing
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6858815848740949833, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6947604102996551011, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
       propertyPath: m_Name
       value: Complete XR Origin Set Up Variant
@@ -755,7 +763,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 3186680927890312076, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
@@ -4566,6 +4575,7 @@ GameObject:
   - component: {fileID: 1483276716}
   - component: {fileID: 1483276717}
   - component: {fileID: 1483276718}
+  - component: {fileID: 1483276719}
   m_Layer: 0
   m_Name: Pistol
   m_TagString: Untagged
@@ -4703,6 +4713,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: NumShots, Assembly-CSharp
         m_MethodName: Increment
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1483276719}
+        m_TargetAssemblyTypeName: haptics, Assembly-CSharp
+        m_MethodName: SendHapticFeedback
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -4907,6 +4929,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1483276719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1483276711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02b90e2df1e6e684eb2e059316f7c1a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  intensity: 0.701
+  duration: 0.2
 --- !u!1001 &1504512088
 PrefabInstance:
   m_ObjectHideFlags: 0

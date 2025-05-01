@@ -42,7 +42,7 @@ namespace UnityEngine.XR.Content.Interaction
             {
                 StartCoroutine(PlayShellDelayed(0.5f)); //calls subroutine to play shell casing sound
             }
-            TriggerHaptics(0.7f, 0.1f); // Call for haptics
+            //TriggerHaptics(0.7f, 0.1f); // Call for haptics
             muzzleFlash.Play();
             LightFlashScript.FlashLight();
 
