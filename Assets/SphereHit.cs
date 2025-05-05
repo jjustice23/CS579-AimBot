@@ -30,6 +30,14 @@ public class SphereHit : MonoBehaviour
     private float Timer;
     private AudioSource TimerEnd;
 
+    public Toggle MovingModeToggle;
+    public float moveSpeed = 2f; // you can tweak this in the inspector
+    private bool isMoving = false;
+    private Vector3 moveDirection;
+
+    private AudioSource hitAudio; 
+
+
     private void InstatiateTarget(int TargetsHit, float HitRatio, bool GameStarted, float Timer)
     {
         this.TargetsHit = TargetsHit;
@@ -45,6 +53,15 @@ public class SphereHit : MonoBehaviour
         TotalShots = Shots.GetComponent<NumShots>();
         slider = TimerSlider.GetComponent<Slider>();
         TimerEnd = GetComponent<AudioSource>();
+        hitAudio = GetComponent<AudioSource>();
+
+
+        if(MovingModeToggle != null)
+        {
+            isMoving = MovingModeToggle.isOn;
+            MovingModeToggle.onValueChanged.AddListener(OnToggleChanged);
+        }
+        SetInitialMoveDirection();
     }
 
     private void Update()
@@ -67,6 +84,21 @@ public class SphereHit : MonoBehaviour
                 // note TargetHits decremented to ignore first target that starts game
                 //Stats.text = TargetsHit-1 + " Targets Hit and " + ((float)(TargetsHit-1)/(float)TotalShots.get())*100 + "% Hit Ratio";  // should probably use HitRatio var to be more idiomatic, but I cant be bothered
                 UpdateStatsText(); // probably unneeded
+            }
+            if (isMoving)
+            {
+                transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
+
+                // Check if we hit a wall — if so, bounce back
+                float floorWidth = floor.transform.localScale.z * room.transform.localScale.z;
+                float zPos = transform.position.z;
+                float sphereRadius = transform.localScale.x / 2f; 
+
+
+                if (zPos <= (-floorWidth / 2)+sphereRadius || zPos >= (floorWidth / 2)-sphereRadius)
+                {
+                    moveDirection = -moveDirection;
+                }
             }
         }
     }
@@ -92,8 +124,12 @@ public class SphereHit : MonoBehaviour
             UpdateStatsText();
             UpdateTimerText();
         }
+        if (!isMoving){SpawnTarget();}
+        if (hitAudio != null)
+        {
+            hitAudio.Play();
+        }
 
-        SpawnTarget();
     }
 
     private void SpawnTarget()
@@ -113,10 +149,10 @@ public class SphereHit : MonoBehaviour
         float wallHeight = wall.transform.localScale.y * room.transform.localScale.y;
         // todo: clean up ranges
 
-        float x = Random.Range(0 + sphereRadius, (floorLen / 2) - sphereRadius);
+        float x = Random.Range(floorLen /3, (floorLen) - sphereRadius);
         float y = Random.Range(0 + sphereRadius, wallHeight - sphereRadius);
         float z = Random.Range((-1 * (floorWidth / 2)) + sphereRadius, (floorWidth / 2) - sphereRadius);
-        GameObject NewSphere = Instantiate(gameObject, new Vector3(x, y, z), Quaternion.identity);
+        GameObject NewSphere = Instantiate(gameObject, new Vector3(x, y, z/2), Quaternion.identity);
         SphereHit SphereScript = NewSphere.GetComponent<SphereHit>();
         SphereScript.InstatiateTarget(TargetsHit, HitRatio, GameStarted, Timer);
 
@@ -141,4 +177,15 @@ public class SphereHit : MonoBehaviour
     {
         if(Timer >= 0) TimerText.text = "Timer: " + Mathf.Floor(Timer);
     }
+
+    private void SetInitialMoveDirection()
+    {
+        moveDirection = Vector3.forward; 
+    }
+
+    private void OnToggleChanged(bool value)
+    {
+        isMoving = value;
+    }
+
 }
