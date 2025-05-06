@@ -35,6 +35,10 @@ public class SphereHit : MonoBehaviour
     private bool isMoving = false;
     private Vector3 moveDirection;
 
+    private ParticleSystem particles;
+    private float destroyDelay = .15f;
+    private Renderer targetRenderer;
+
     private AudioSource hitAudio; 
 
 
@@ -54,9 +58,12 @@ public class SphereHit : MonoBehaviour
         slider = TimerSlider.GetComponent<Slider>();
         TimerEnd = GetComponent<AudioSource>();
         hitAudio = GetComponent<AudioSource>();
+        particles = GetComponent<ParticleSystem>();
+        targetRenderer = GetComponent<Renderer>();
 
 
-        if(MovingModeToggle != null)
+
+        if (MovingModeToggle != null)
         {
             isMoving = MovingModeToggle.isOn;
             MovingModeToggle.onValueChanged.AddListener(OnToggleChanged);
@@ -105,7 +112,7 @@ public class SphereHit : MonoBehaviour
 
     public void OnHit()
     {
-
+        particles.Play();
         if (GameStarted)
         {
             TargetsHit++;
@@ -124,7 +131,7 @@ public class SphereHit : MonoBehaviour
             UpdateStatsText();
             UpdateTimerText();
         }
-        if (!isMoving){SpawnTarget();}
+        if (!isMoving || !GameStarted){SpawnTarget();}
         if (hitAudio != null)
         {
             hitAudio.Play();
@@ -149,14 +156,18 @@ public class SphereHit : MonoBehaviour
         float wallHeight = wall.transform.localScale.y * room.transform.localScale.y;
         // todo: clean up ranges
 
-        float x = Random.Range(floorLen /3, (floorLen) - sphereRadius);
+        float x = Random.Range(0 + sphereRadius, (floorLen / 2) - sphereRadius);
         float y = Random.Range(0 + sphereRadius, wallHeight - sphereRadius);
         float z = Random.Range((-1 * (floorWidth / 2)) + sphereRadius, (floorWidth / 2) - sphereRadius);
-        GameObject NewSphere = Instantiate(gameObject, new Vector3(x, y, z/2), Quaternion.identity);
+        //GameObject NewSphere = Instantiate(gameObject, new Vector3(x, y, z/2), Quaternion.identity);
+        GameObject NewSphere = Instantiate(gameObject, new Vector3(x, y, z), Quaternion.identity);
         SphereHit SphereScript = NewSphere.GetComponent<SphereHit>();
         SphereScript.InstatiateTarget(TargetsHit, HitRatio, GameStarted, Timer);
 
-        Destroy(gameObject);
+        targetRenderer.enabled = false;
+        particles.Play();
+        //Destroy(gameObject);
+        StartCoroutine(DestroyTargetAfterEffect());
     }
 
     public void UpdateStatsText()
@@ -186,6 +197,15 @@ public class SphereHit : MonoBehaviour
     private void OnToggleChanged(bool value)
     {
         isMoving = value;
+    }
+
+
+
+    private IEnumerator DestroyTargetAfterEffect()
+    {
+        yield return new WaitForSeconds(destroyDelay);
+
+        Destroy(gameObject);
     }
 
 }
