@@ -18,6 +18,8 @@ public class SphereHit : MonoBehaviour
     public TextMeshProUGUI Stats;
     public TextMeshProUGUI TimerText;
     public GameObject TimerSlider;
+    public AudioClip TimerEndingSound;
+    public AudioClip TargetHitSound;
     
 
     private Slider slider;
@@ -84,7 +86,8 @@ public class SphereHit : MonoBehaviour
             else if (Timer <= 0)
             {
                 //need to reset button height
-                TimerEnd.PlayOneShot(TimerEnd.clip);
+                //TimerEnd.PlayOneShot(TimerEnd.clip);
+                TimerEnd.PlayOneShot(TimerEndingSound);
                 GameStarted = false;
                 ButtonStatus.OnClick();
                 ButtonStatus.ToggleButton();
@@ -156,7 +159,7 @@ public class SphereHit : MonoBehaviour
         float wallHeight = wall.transform.localScale.y * room.transform.localScale.y;
         // todo: clean up ranges
 
-        float x = Random.Range(0 + sphereRadius, (floorLen / 2) - sphereRadius);
+        float x = Random.Range(1.5f + sphereRadius, (floorLen) - sphereRadius);
         float y = Random.Range(0 + sphereRadius, wallHeight - sphereRadius);
         float z = Random.Range((-1 * (floorWidth / 2)) + sphereRadius, (floorWidth / 2) - sphereRadius);
         //GameObject NewSphere = Instantiate(gameObject, new Vector3(x, y, z/2), Quaternion.identity);
